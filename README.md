@@ -47,12 +47,30 @@ A sleek and secure mobile OTP (One-Time Password) Authenticator app,  built usin
 
 --- -->
 
+
+logic
+
+## 👤 Owner
+
+Developed and maintained by Mehdi Forkani
+
+📸 [Instagram](https://www.instagram.com/forkanimahdi)
+
+💻 [GitHub](https://github.com/forkanimahdi)
+
+💼 [linkedin](https://www.linkedin.com/in/forkanimahdi)
+
+
+
+Copyright (c) 2025 Mehdi Forkani
+
 ## 📦 Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/forkanimahdi/otp-authenticator-app.git
-cd otp-authenticator-app
+git clone https://github.com/forkanimahdi/shieldon.git
+
+cd shieldon
 
 # Install dependencies
 npm install
@@ -61,4 +79,3 @@ npm install
 npx expo start
 
 
-Copyright (c) 2025 Mehdi Forkani
