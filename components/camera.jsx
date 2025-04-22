@@ -34,9 +34,11 @@ const CameraComponent = ({ setHasPermission }) => {
 
                 const newTab = [...urls]
 
-                let existingData = urls.findIndex(e => e.label = OTPEntry.label)
+                let existingData = urls.findIndex(e => e.secret == OTPEntry.secret)
 
                 existingData == -1 ? newTab.push(OTPEntry) : newTab.splice(newTab[existingData], 1, OTPEntry)
+
+                // newTab.push(OTPEntry)
 
                 setUrls(newTab)
 
@@ -48,7 +50,6 @@ const CameraComponent = ({ setHasPermission }) => {
 
                 console.log(urls);
 
-
             } catch (error) {
                 Alert.alert("Error", "Failed to parse the QR code.");
                 setHasPermission(false);
@@ -59,6 +60,7 @@ const CameraComponent = ({ setHasPermission }) => {
         }
     };
 
+    
 
     const panResponder = PanResponder.create({
         onMoveShouldSetPanResponder: (_, gestureState) => {
@@ -79,7 +81,7 @@ const CameraComponent = ({ setHasPermission }) => {
             onBarcodeScanned={handleBarCodeScanned}
             {...panResponder.panHandlers}
         >
-            <View className="w-full h-full items-center justify-end  pb-10">
+            <View className="w-full h-screen items-center justify-end  pb-10">
                 <Text className="text-white text-base opacity-70 absolute bottom-40 ">Swipe right to close camera</Text>
             </View>
         </CameraView>

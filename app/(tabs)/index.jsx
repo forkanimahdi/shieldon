@@ -6,7 +6,7 @@ import {
   FlatList,
   ToastAndroid,
   Platform,
-  
+
 } from "react-native";
 import { useCameraPermissions } from "expo-camera";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -42,7 +42,7 @@ export default function HomeScreen() {
 
   const copyToClipboard = async (text) => {
     // console.log("h");
-    
+
     await Clipboard.setStringAsync(text);
     if (Platform.OS === "android") {
       ToastAndroid.show("Code copied to clipboard", ToastAndroid.SHORT);
@@ -83,6 +83,12 @@ export default function HomeScreen() {
     return <CameraComponent setHasPermission={setHasPermission} />;
   }
 
+  const toggleDelete = (i) => {
+    console.log(i);
+
+  }
+
+
   return (
     <View className={`flex-1 px-4 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
       {/* Header */}
@@ -99,7 +105,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-  
+
 
       {/* OTP List */}
       <FlatList
