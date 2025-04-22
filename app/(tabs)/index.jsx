@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  ToastAndroid,
-  Platform,
-  Alert,
+import { View, Text, TouchableOpacity, FlatList, ToastAndroid, Platform, Alert, } from "react-native";
+import Constants from 'expo-constants';
 
-} from "react-native";
 import { useCameraPermissions } from "expo-camera";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppContext } from "@/context";
@@ -39,7 +32,7 @@ export default function HomeScreen() {
   };
 
   const updateCodes = () => {
-    const newCodes = urls.map((entry) => ({
+    const newCodes = urls?.map((entry) => ({
       ...entry,
       otp: GenerateTOTP(entry.secret),
     }));
@@ -79,6 +72,11 @@ export default function HomeScreen() {
     if (remaining <= 10) return "#FFA500"; // orange
     return "#4CAF50"; // green
   };
+
+
+
+  // console.log('App version:', Constants.expoConfig.version);
+
 
   const radius = 12;
   const strokeWidth = 3;
@@ -122,9 +120,12 @@ export default function HomeScreen() {
     <View className={`flex-1 px-4 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
       {/* Header */}
       <View className="flex-row items-center justify-between mb-6">
-        <View className={`${darkMode ? "bg-[#252728]" : "bg-gray-200"} items-center justify-center rounded-lg w-12 h-12`}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("settings")}
+          className={`${darkMode ? "bg-[#252728]" : "bg-gray-200"} items-center justify-center rounded-lg w-12 h-12`}
+        >
           <MaterialIcons size={20} name="settings" color={darkMode ? "white" : "#111"} />
-        </View>
+        </TouchableOpacity>
         <Text className={`${darkMode ? "text-white" : "text-black"} text-lg font-semibold`}>Good Morning</Text>
         <TouchableOpacity
           onPress={toggleCamera}
@@ -136,66 +137,67 @@ export default function HomeScreen() {
 
       {/* OTP List */}
       <View style={{ flex: 1 }}>
-        <FlatList
-          data={codes.reverse()}
-          keyExtractor={(item, index) => `${item.label}-${index}`}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("issuer", { item })}
-
-              onLongPress={() => toggleDelete(index)}
-              className={`${darkMode ? "bg-[#1c1c1e]" : "bg-white"} mb-4 p-5 rounded-2xl shadow mt-2`}
+        {!codes ? (
+          <View className="flex-1 justify-center items-center">
+            <Text
+              className={`text-base opacity-30  ${darkMode ? "text-white" : "text-black"}`}
+              
             >
-              <View className="flex-row justify-between items-center mb-2">
-                <Text className="text-gray-500 text-base">
-                  <Text className={`${darkMode ? "text-white" : "text-black"} font-medium`}>
-                    {item.issuer}
-                  </Text>{" "}
-                  ({item.label.split(":")[1]})
-                </Text>
-
-                {/* Circular shield timer */}
-                <Svg height={30} width={30}>
-                  <Circle
-                    stroke={darkMode ? "#fff" : "#333"}
-                    fill="none"
-                    cx={15}
-                    cy={15}
-                    r={12}
-                    strokeWidth={3}
-                    opacity={0.2}
-                  />
-                  <Circle
-                    stroke={getCircleColor()}
-                    fill="none"
-                    cx={15}
-                    cy={15}
-                    r={12}
-                    strokeWidth={3}
-                    strokeDasharray={`${circumference}`}
-                    strokeDashoffset={circumference - progress}
-                    strokeLinecap="round"
-                    rotation="-90"
-                    origin="15,15"
-                  />
-                </Svg>
-              </View>
-
-              {/* OTP and clipboard */}
-              <View className="mt-4 flex-row justify-between items-center">
-                <Text className={`${darkMode ? "text-white" : "text-black"} text-2xl tracking-widest`}>
-                  {item.otp}
-                </Text>
-                <TouchableOpacity onPress={() => copyToClipboard(item.otp)}>
-                  <MaterialIcons name="content-copy" size={22} color={darkMode ? "#fff" : "#222"} />
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
+              No OTPs found.
+            </Text>
+       
+          </View>
+        ) : (
+          <FlatList
+            data={codes?.reverse()}
+            keyExtractor={(item, index) => `${item.label}-${index}`}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 80 }}
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate("issuer", { item })}
+                onLongPress={() => toggleDelete(index)}
+                className={`${darkMode ? "bg-[#1c1c1e]" : "bg-white"} mb-4 p-5 rounded-2xl shadow mt-2`}
+              >
+                {/* ... existing card content ... */}
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-gray-500 text-base">
+                    <Text className={`${darkMode ? "text-white" : "text-black"} font-medium`}>
+                      {item.issuer}
+                    </Text>{" "}
+                    ({item.label.split(":")[1]})
+                  </Text>
+                  <Svg height={30} width={30}>
+                    <Circle stroke={darkMode ? "#fff" : "#333"} fill="none" cx={15} cy={15} r={12} strokeWidth={3} opacity={0.2} />
+                    <Circle
+                      stroke={getCircleColor()}
+                      fill="none"
+                      cx={15}
+                      cy={15}
+                      r={12}
+                      strokeWidth={3}
+                      strokeDasharray={`${circumference}`}
+                      strokeDashoffset={circumference - progress}
+                      strokeLinecap="round"
+                      rotation="-90"
+                      origin="15,15"
+                    />
+                  </Svg>
+                </View>
+                <View className="mt-4 flex-row justify-between items-center">
+                  <Text className={`${darkMode ? "text-white" : "text-black"} text-2xl tracking-widest`}>
+                    {item.otp}
+                  </Text>
+                  <TouchableOpacity onPress={() => copyToClipboard(item.otp)}>
+                    <MaterialIcons name="content-copy" size={22} color={darkMode ? "#fff" : "#222"} />
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
+
 
       <Footer />
 
