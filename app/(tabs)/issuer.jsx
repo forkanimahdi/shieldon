@@ -12,6 +12,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAppContext } from "@/context";
 import * as Clipboard from 'expo-clipboard';
+import Footer from "@/components/footer";
 
 export default function DetailScreen() {
     const { darkMode } = useAppContext();
@@ -86,6 +87,8 @@ export default function DetailScreen() {
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            <Footer/>
         </View>
     );
 }

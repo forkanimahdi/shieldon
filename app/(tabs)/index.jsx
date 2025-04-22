@@ -19,6 +19,7 @@ import * as Clipboard from 'expo-clipboard';
 import { Circle, Svg } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router";
+import Footer from "@/components/footer";
 
 export default function HomeScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -26,8 +27,8 @@ export default function HomeScreen() {
   const { darkMode, urls, setUrls } = useAppContext();
   const [remaining, setRemaining] = useState(30);
   const [codes, setCodes] = useState([]);
-      const navigation = useNavigation();
-  
+  const navigation = useNavigation();
+
 
   const toggleCamera = () => {
     if (!permission.granted) {
@@ -196,12 +197,9 @@ export default function HomeScreen() {
         />
       </View>
 
-      {/* Fixed Footer */}
-      <View className={`${darkMode ? "bg-[#1c1c1e]" : "bg-white"} absolute bottom-0 py-2 w-screen items-center`}>
-        <Text className="text-xs text-gray-400">
-          🛡️ ShieldOn powered by <Text className="font-semibold">Forkani Studio</Text>
-        </Text>
-      </View>
+      <Footer />
+
+
     </View>
   );
 
