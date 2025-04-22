@@ -6,6 +6,7 @@ import {
   FlatList,
   ToastAndroid,
   Platform,
+  Alert,
 
 } from "react-native";
 import { useCameraPermissions } from "expo-camera";
@@ -16,13 +17,14 @@ import { GenerateTOTP } from "@/components/generateTOTP";
 
 import * as Clipboard from 'expo-clipboard';
 import { Circle, Svg } from "react-native-svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [hasPermission, setHasPermission] = useState(null);
   const [codes, setCodes] = useState([]);
   const [remaining, setRemaining] = useState(30);
-  const { darkMode, urls } = useAppContext();
+  const { darkMode, urls, setUrls } = useAppContext();
 
   const toggleCamera = () => {
     if (!permission.granted) {
@@ -47,7 +49,7 @@ export default function HomeScreen() {
     if (Platform.OS === "android") {
       ToastAndroid.show("Code copied to clipboard", ToastAndroid.SHORT);
     } else {
-      // Optionally add a fallback for iOS
+      // hadchi dyal ios  tanchofo mn be33d
       alert("Code copied to clipboard");
     }
   };
@@ -84,9 +86,32 @@ export default function HomeScreen() {
   }
 
   const toggleDelete = (i) => {
-    console.log(i);
+    Alert.alert(
+      'Delete OTP',
+      `Are you sure you want to delete ${urls[i].label} OTP?`,
+      [
+        { text: 'Cancel', style: 'cancel',},
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              const newUrls = [...urls];
+              newUrls.splice(i, 1);
 
-  }
+              setUrls(newUrls);
+
+              await AsyncStorage.setItem("urls", JSON.stringify(newUrls)); 
+            } catch (error) {
+              console.error("Failed to delete OTP:", error);
+              Alert.alert("Error", "Something went wrong while deleting the OTP.");
+            }
+          },
+          style: 'destructive',
+        },
+      ]
+    );
+  };
+
 
 
   return (
@@ -111,8 +136,8 @@ export default function HomeScreen() {
       <FlatList
         data={codes}
         keyExtractor={(item, index) => `${item.label}-${index}`}
-        renderItem={({ item }) => (
-          <View className={`${darkMode ? "bg-[#1c1c1e]" : "bg-white"} mb-4 p-5 rounded-2xl shadow mt-2`}>
+        renderItem={({ item, index }) => (
+          <TouchableOpacity onLongPress={() => { toggleDelete(index) }} className={`${darkMode ? "bg-[#1c1c1e]" : "bg-white"} mb-4 p-5 rounded-2xl shadow mt-2`}>
             <View className="flex-row justify-between items-center mb-2">
               <Text className="text-gray-500 text-base">
                 <Text className={`${darkMode ? "text-white" : "text-black"} font-medium`}>
@@ -157,7 +182,7 @@ export default function HomeScreen() {
                 <MaterialIcons name="content-copy" size={22} color={darkMode ? "#fff" : "#222"} />
               </TouchableOpacity>
             </View>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
