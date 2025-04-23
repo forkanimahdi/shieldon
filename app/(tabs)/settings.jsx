@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Switch, useColorScheme } from "react-nati
 import { useNavigation } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppContext } from "@/context";
+import Topnav from "@/components/topnav";
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
@@ -20,20 +21,8 @@ export default function SettingsScreen() {
 
   return (
     <View className={`flex-1 px-4 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
-      {/* Header */}
-      <View className="flex-row items-center justify-between mb-8">
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          className={`${darkMode ? "bg-[#252728]" : "bg-gray-200"} items-center justify-center rounded-lg w-12 h-12`}
-        >
-          <MaterialIcons size={20} name="arrow-back" color={darkMode ? "white" : "#111"} />
-        </TouchableOpacity>
-        <Text className={`${darkMode ? "text-white" : "text-black"} text-lg font-semibold`}>
-          Settings
-        </Text>
-        <View className="w-12" /> {/* Spacer */}
-      </View>
 
+      <Topnav name={"Settings"} />
       {/* Settings Options */}
       <View>
         {/* Dark Mode Toggle */}
