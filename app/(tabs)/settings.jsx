@@ -4,6 +4,8 @@ import { router, useNavigation } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppContext } from "@/context";
 import Topnav from "@/components/topnav";
+import Constants from 'expo-constants';
+
 
 export default function SettingsScreen() {
   const navigation = useNavigation();
@@ -24,7 +26,7 @@ export default function SettingsScreen() {
 
       <Topnav name={"Settings"} />
       {/* Settings Options */}
-      <View>
+      <View className="mt-10">
         {/* Dark Mode Toggle */}
         <View
           className={`flex-row justify-between items-center px-5 py-4 rounded-2xl ${darkMode ? "bg-[#1c1c1e]" : "bg-white"}`}
@@ -48,6 +50,9 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           ))}
         </View>
+      </View>
+      <View className="absolute bottom-0 items-center w-screen py-2">
+          <Text className={`${darkMode ? "text-white/50" : "text-black"}  text-base`}>Shieldon ( v {Constants.expoConfig.version} )</Text>
       </View>
     </View>
   );

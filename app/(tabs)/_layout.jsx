@@ -31,7 +31,8 @@ export default function TabLayout() {
           "issuer",
           "settings",
           "about",
-          "support"
+          "support",
+          "security",
 
         ].map((name, index) =>
           <Tabs.Screen
