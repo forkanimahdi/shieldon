@@ -28,6 +28,8 @@ export default function TabLayout() {
       {
         [
           "index",
+          "home",
+          "pinLock",
           "issuer",
           "settings",
           "about",
@@ -36,6 +38,7 @@ export default function TabLayout() {
 
         ].map((name, index) =>
           <Tabs.Screen
+            key={index}
             name={name}
             options={{
               title: name,

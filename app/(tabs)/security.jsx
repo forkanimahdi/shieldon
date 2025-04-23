@@ -1,174 +1,166 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable, Vibration, Dimensions, Animated, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useColorScheme } from "nativewind";
+import { useAppContext } from "@/context";
 import Topnav from "@/components/topnav";
 
-export default function SecuritySettingsScreen() {
-    const { colorScheme } = useColorScheme();
-    const darkMode = colorScheme === "dark";
+const PIN_LENGTH = 4;
+const screenWidth = Dimensions.get("window").width;
 
+export default function PhoneStylePin() {
+    const [pin, setPin] = useState([]);
     const [storedPin, setStoredPin] = useState(null);
-    const [step, setStep] = useState("loading");
-    const [pin, setPin] = useState(["", "", "", "", "", ""]);
-    const [newPin, setNewPin] = useState([]);
-
-    const inputs = useRef([]);
+    const [step, setStep] = useState("setup"); // setup, verify, new, confirm
+    const [tempPin, setTempPin] = useState(null);
+    const { darkMode } = useAppContext();
+    const shakeAnimation = useState(new Animated.Value(0))[0];
 
     useEffect(() => {
-        const checkStoredPin = async () => {
-            const saved = await AsyncStorage.getItem("appPin");
+        const loadPIN = async () => {
+            const saved = await AsyncStorage.getItem("securePIN");
+            // console.log(saved);
+            
             if (saved) {
                 setStoredPin(saved);
                 setStep("verify");
-            } else {
-                setStep("new");
             }
         };
-        checkStoredPin();
+        loadPIN();
     }, []);
 
-    const focusNext = (index) => {
-        if (index < 5) inputs.current[index + 1]?.focus();
+    const triggerShake = () => {
+        Animated.sequence([
+            Animated.timing(shakeAnimation, { toValue: 10, duration: 50, useNativeDriver: true }),
+            Animated.timing(shakeAnimation, { toValue: -10, duration: 50, useNativeDriver: true }),
+            Animated.timing(shakeAnimation, { toValue: 6, duration: 50, useNativeDriver: true }),
+            Animated.timing(shakeAnimation, { toValue: 0, duration: 50, useNativeDriver: true }),
+        ]).start();
     };
 
-    const focusPrev = (index) => {
-        if (index > 0) inputs.current[index - 1]?.focus();
-    };
+    const handlePress = async (val) => {
+        Vibration.vibrate(10);
 
-    const handleChange = (text, index) => {
-        if (!/^\d?$/.test(text)) return; // Only digits
-        const updated = [...pin];
-        updated[index] = text;
-        setPin(updated);
-
-        if (text && index < 5) focusNext(index);
-        if (!text && index > 0) focusPrev(index);
-    };
-
-    const getPinAsString = () => pin.join("");
-
-    const handleNext = async () => {
-        const inputPin = getPinAsString();
-
-        if (inputPin.length < 6 || pin.includes("")) {
-            Alert.alert("Error", "Please enter a full 6-digit PIN.");
+        if (val === "del") {
+            setPin((prev) => prev.slice(0, -1));
             return;
         }
 
-        if (step === "verify") {
-            if (inputPin === storedPin) {
-                setPin(["", "", "", "", "", ""]);
-                setStep("new");
-            } else {
-                Alert.alert("Incorrect PIN", "Please try again.");
-                setPin(["", "", "", "", "", ""]);
-                inputs.current[0]?.focus();
-            }
-        } else if (step === "new") {
-            setNewPin(pin);
-            setPin(["", "", "", "", "", ""]);
-            setStep("confirm");
-        } else if (step === "confirm") {
-            if (inputPin !== newPin.join("")) {
-                Alert.alert("PINs do not match", "Please start over.");
-                setPin(["", "", "", "", "", ""]);
-                setStep("new");
-                return;
-            }
+        if (pin.length >= PIN_LENGTH) return;
 
-            try {
-                await AsyncStorage.setItem("appPin", inputPin);
-                Alert.alert("Success", "Your PIN has been saved.");
-                setStoredPin(inputPin);
-                setPin(["", "", "", "", "", ""]);
-                setNewPin([]);
-                setStep("verify");
-            } catch (err) {
-                Alert.alert("Error", "Failed to save PIN.");
+        const newPin = [...pin, val];
+        setPin(newPin);
+
+        if (newPin.length === PIN_LENGTH) {
+            switch (step) {
+                case "setup":
+                    setTempPin(newPin.join(""));
+                    setPin([]);
+                    setStep("confirm");
+                    break;
+                case "confirm":
+                    if (newPin.join("") === tempPin) {
+                        await AsyncStorage.setItem("securePIN", newPin.join(""));
+                        setStoredPin(newPin.join(""));
+                        Alert.alert("PIN Set", "Your PIN has been securely saved.");
+                        setStep("verified");
+                    } else {
+                        triggerShake();
+                        Alert.alert("Error", "PINs do not match. Try again.");
+                    }
+                    setPin([]);
+                    break;
+                case "verify":
+                    if (newPin.join("") === storedPin) {
+                        Alert.alert("Access Granted", "You can now manage your PIN.", [
+                            { text: "Change PIN", onPress: () => setStep("new") },
+                            { text: "Deactivate PIN", onPress: () => deactivatePIN() },
+                        ]);
+                        setStep("verified");
+                    } else {
+                        triggerShake();
+                        Alert.alert("Wrong PIN", "Try again.");
+                        setPin([]);
+                    }
+                    break;
+                case "new":
+                    setTempPin(newPin.join(""));
+                    setPin([]);
+                    setStep("confirm");
+                    break;
             }
         }
     };
 
-    const renderStepTitle = () => {
-        switch (step) {
-            case "verify":
-                return "Enter your current PIN";
-            case "new":
-                return "Set a new 6-digit PIN";
-            case "confirm":
-                return "Confirm your new PIN";
-            default:
-                return "";
-        }
+    const deactivatePIN = async () => {
+        await AsyncStorage.removeItem("securePIN");
+        setStoredPin(null);
+        setPin([]);
+        setStep("setup");
+        Alert.alert("Deactivated", "PIN code has been removed.");
     };
 
-    const isPinComplete = pin.every((digit) => digit !== "");
+    const getPromptText = () => {
+        if (step === "setup") return "Create a new PIN code";
+        if (step === "confirm") return "Confirm your new PIN";
+        if (step === "verify") return "Enter your current PIN code";
+        if (step === "new") return "Enter your new PIN";
+        return "Manage your security PIN";
+    };
 
-    if (step === "loading") {
-        return (
-            <View className={`flex-1 items-center justify-center ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
-                <Text className={darkMode ? "text-white" : "text-black"}>Loading...</Text>
-            </View>
-        );
-    }
+    const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "del", "0"];
 
     return (
-        <View className={`flex-1 px-6 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
-            <Topnav name="Security Settings" />
-
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : undefined}
-                className="flex-1 justify-start"
-            >
-                <Text className={`text-xl font-bold mb-8 ${darkMode ? "text-white" : "text-black"}`}>
-                    {renderStepTitle()}
+        <View className="pt-20 px-6">
+            <Topnav name="Security" />
+            <View className="mt-10">
+                <Text className={`text-2xl font-bold mb-3 text-center ${darkMode ? "text-white" : "text-black"}`}>
+                    {getPromptText()}
+                </Text>
+                <Text className={`mb-10 text-center ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                    Secure your Payeer privacy with a PIN code
                 </Text>
 
-                <View className="flex-row justify-between mb-10">
-                    {pin.map((digit, i) => (
-                        <TextInput
+                <Animated.View
+                    className="flex-row justify-between px-2 mb-16"
+                    style={{ gap: 20, transform: [{ translateX: shakeAnimation }] }}
+                >
+                    {Array.from({ length: PIN_LENGTH }).map((_, i) => (
+                        <View
                             key={i}
-                            ref={(el) => (inputs.current[i] = el)}
-                            keyboardType="numeric"
-                            maxLength={1}
-                            value={digit}
-                            onChangeText={(text) => handleChange(text, i)}
-                            style={{
-                                width: 50,
-                                height: 60,
-                                borderRadius: 10,
-                                borderWidth: 1.5,
-                                textAlign: "center",
-                                fontSize: 24,
-                                fontWeight: "600",
-                                color: darkMode ? "#fff" : "#000",
-                                backgroundColor: darkMode ? "#1c1c1e" : "#fff",
-                                borderColor: darkMode ? "#3a3a3c" : "#ccc",
-                            }}
-                        />
+                            className={`w-16 h-16 border-2 rounded-xl ${pin[i]
+                                ? darkMode
+                                    ? "bg-white border-white"
+                                    : "bg-black border-black"
+                                : darkMode
+                                    ? "border-gray-600"
+                                    : "border-gray-300"
+                                } flex items-center justify-center`}
+                        >
+                            {pin[i] ? (
+                                <View className={`w-3 h-3 rounded-full ${darkMode ? "bg-black" : "bg-white"}`} />
+                            ) : null}
+                        </View>
+                    ))}
+                </Animated.View>
+
+                <View className="flex flex-wrap gap-x-3 flex-row justify-center">
+                    {keypad.map((key, i) => (
+                        <Pressable
+                            key={i}
+                            onPress={() => handlePress(key)}
+                            className={`w-24 h-24 m-2 rounded-2xl items-center justify-center ${darkMode ? "bg-[#1c1c1e]" : "bg-gray-100"}`}
+                            android_ripple={{ color: "#d1d5db", borderless: false }}
+                        >
+                            {key === "del" ? (
+                                <Ionicons name="backspace-outline" size={34} color={darkMode ? "white" : "gray"} />
+                            ) : (
+                                <Text className={`text-3xl font-semibold ${darkMode ? "text-white" : "text-black"}`}>{key}</Text>
+                            )}
+                        </Pressable>
                     ))}
                 </View>
-
-                <TouchableOpacity
-                    disabled={!isPinComplete}
-                    onPress={handleNext}
-                    className={`rounded-xl py-3 ${darkMode ? "bg-[#252728]" : "bg-[#e4e4e4]"}`}
-                    style={{ opacity: isPinComplete ? 1 : 0.4 }}
-                >
-                    <Text className={`text-center font-medium ${darkMode ? "text-white" : "text-black"}`}>
-                        Next
-                    </Text>
-                </TouchableOpacity>
-            </KeyboardAvoidingView>
+            </View>
         </View>
     );
 }
