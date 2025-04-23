@@ -14,43 +14,35 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-      
+
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: { display: 'none' },
-       
-        
+
+
       }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="issuer"
-        options={{
-          title: 'Issuer',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'settings',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="about"
-        options={{
-          title: 'About',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
+
+
+      {
+        [
+          "index",
+          "issuer",
+          "settings",
+          "about",
+          "support"
+
+        ].map((name, index) =>
+          <Tabs.Screen
+            name={name}
+            options={{
+              title: name,
+              tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+            }}
+          />
+        )
+      }
 
     </Tabs>
   );

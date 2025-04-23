@@ -32,9 +32,9 @@ const CameraComponent = ({ setHasPermission }) => {
 
                 let OTPEntry = { label: extractLabel(url), issuer: issuer, secret: secret, url: url, };
 
-                const newTab = [...urls]
+                const newTab = [...urls || []]
 
-                let existingData = urls.findIndex(e => e.secret == OTPEntry.secret)
+                let existingData = urls?.findIndex(e => e.secret == OTPEntry.secret)
 
                 existingData == -1 ? newTab.push(OTPEntry) : newTab.splice(newTab[existingData], 1, OTPEntry)
 
@@ -80,6 +80,7 @@ const CameraComponent = ({ setHasPermission }) => {
             facing="back"
             onBarcodeScanned={handleBarCodeScanned}
             {...panResponder.panHandlers}
+            className='h-screen'
         >
             <View className="w-full h-screen items-center justify-end  pb-10">
                 <Text className="text-white text-base opacity-70 absolute bottom-40 ">Swipe right to close camera</Text>

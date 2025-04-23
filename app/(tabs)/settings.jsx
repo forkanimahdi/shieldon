@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Switch, useColorScheme } from "react-native";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppContext } from "@/context";
 import Topnav from "@/components/topnav";
@@ -15,7 +15,7 @@ export default function SettingsScreen() {
     { label: "Security Settings", icon: "lock", screen: "security" },
     { label: "Notification Preferences", icon: "notifications", screen: "notifications" },
     { label: "About Application", icon: "info", screen: "about" },
-    { label: "Help & Support", icon: "help-outline", screen: "help" },
+    { label: "Help & Support", icon: "help-outline", screen: "support" },
     { label: "Rate the App", icon: "star-rate", screen: "rate" },
   ];
 
@@ -38,7 +38,7 @@ export default function SettingsScreen() {
           {options?.map((opt, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => navigation.navigate(opt.screen)}
+              onPress={() => router.push(opt.screen)}
               className={`flex-row items-center p-5 mt-3 rounded-2xl ${darkMode ? "bg-[#1c1c1e]" : "bg-white"}`}
             >
               <MaterialIcons name={opt.icon} size={22} color={darkMode ? "white" : "#222"} />

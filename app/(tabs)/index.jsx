@@ -84,7 +84,9 @@ export default function HomeScreen() {
   const progress = (remaining / 30) * circumference;
 
   if (hasPermission) {
-    return <CameraComponent setHasPermission={setHasPermission} />;
+    return    <CameraComponent setHasPermission={setHasPermission}/>
+        
+    
   }
 
   const toggleDelete = (i) => {
