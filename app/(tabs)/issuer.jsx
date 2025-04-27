@@ -35,10 +35,10 @@ export default function DetailScreen() {
         <View className={`flex-1 px-4 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
             {/* Header */}
 
-            <Topnav name={"OTP Details"} />
+            <Topnav backto={"/"} name={"OTP Details"} />
 
             {/* Info Box */}
-            <View className={`${darkMode ? "bg-[#1c1c1e]" : "bg-white"} p-5 rounded-2xl shadow`}>
+            <View className={`${darkMode ? "bg-[#1c1c1e]" : "bg-white"} p-5 rounded-2xl shadow mt-10`}>
                 <Text className={`${darkMode ? "text-white" : "text-black"} text-base mb-2 font-semibold`}>
                     Issuer:
                 </Text>

@@ -13,7 +13,7 @@ export default function AboutScreen() {
 
     return (
         <View className={`flex-1 px-6 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
-            <Topnav name={"About"} />
+            <Topnav  backto={"/settings"}   name={"About"} />
 
             <ScrollView className={`flex-1   ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
                 <Text className={`text-2xl font-bold mb-2 ${darkMode ? "text-white" : "text-black"}`}>

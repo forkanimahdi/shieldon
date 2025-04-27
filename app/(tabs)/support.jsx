@@ -106,7 +106,7 @@ export default function HelpSupportScreen() {
             className={`flex-1 px-6 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"
                 }`}
         >
-            <Topnav name={"Help & Support"} />
+            <Topnav backto={"/settings"} name={"Help & Support"} />
 
             <ScrollView
                 className={`flex-1 mt-10 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"

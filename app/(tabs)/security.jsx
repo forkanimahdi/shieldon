@@ -117,11 +117,11 @@ export default function PhoneStylePin() {
         return "Manage your security PIN";
     };
 
-    const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "del", "0", "OK"];
+    const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "del", "0"];
 
     return (
         <View className={`pt-20 px-6 h-screen ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"} `}>
-            <Topnav name="Security" />
+            <Topnav backto={"/settings"} name="Security" />
             <View className="mt-10">
                 <Text className={`text-2xl font-bold mb-3 text-center ${darkMode ? "text-white" : "text-black"}`}>
                     {getPromptText()}

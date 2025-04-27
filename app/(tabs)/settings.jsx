@@ -5,6 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppContext } from "@/context";
 import Topnav from "@/components/topnav";
 import Constants from 'expo-constants';
+import * as Linking from 'expo-linking'
 
 
 export default function SettingsScreen() {
@@ -12,10 +13,10 @@ export default function SettingsScreen() {
   const { darkMode, setDarkMode } = useAppContext();
 
   const options = [
-    { label: "Manage OTP Accounts", icon: "security", screen: "manage-accounts" },
+    // { label: "Manage OTP Accounts", icon: "security", screen: "manage-accounts" },
     // { label: "Backup & Restore", icon: "backup", screen: "backup" },
     { label: "Security Settings", icon: "lock", screen: "security" },
-    { label: "Notification Preferences", icon: "notifications", screen: "notifications" },
+    // { label: "Notification Preferences", icon: "notifications", screen: "notifications" },
     { label: "About Application", icon: "info", screen: "about" },
     { label: "Help & Support", icon: "help-outline", screen: "support" },
     { label: "Rate the App", icon: "star-rate", screen: "rate" },
@@ -24,15 +25,15 @@ export default function SettingsScreen() {
   return (
     <View className={`flex-1 px-4 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
 
-      <Topnav name={"Settings"} />
+      <Topnav backto={"/"} name={"Settings"} />
       {/* Settings Options */}
       <View className="mt-10">
-        {/* Dark Mode Toggle */}
+        {/* Dark Mode */}
         <View
           className={`flex-row justify-between items-center px-5 py-4 rounded-2xl ${darkMode ? "bg-[#1c1c1e]" : "bg-white"}`}
         >
           <Text className={`${darkMode ? "text-white" : "text-black"} text-base`}>Dark Mode</Text>
-          <Switch trackColor={darkMode ? "#f9f9f9" : "#1c1c1e"}  thumbColor={darkMode ? "#f9f9f9" : "#1c1c1e"} value={darkMode} onValueChange={()=>setDarkMode(!darkMode)} />
+          <Switch trackColor={darkMode ? "#f9f9f9" : "#1c1c1e"} thumbColor={darkMode ? "#f9f9f9" : "#1c1c1e"} value={darkMode} onValueChange={() => setDarkMode(!darkMode)} />
         </View>
 
         {/* Spacer before other options */}
@@ -40,7 +41,13 @@ export default function SettingsScreen() {
           {options?.map((opt, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => router.push(opt.screen)}
+              onPress={() => {
+                if (opt.screen === 'rate') {
+                  Linking.openURL('https://play.google.com/store/apps/details?id=com.forkanimahdi.shieldon');
+                } else {
+                  router.push(opt.screen);
+                }
+              }}
               className={`flex-row items-center p-5 mt-3 rounded-2xl ${darkMode ? "bg-[#1c1c1e]" : "bg-white"}`}
             >
               <MaterialIcons name={opt.icon} size={22} color={darkMode ? "white" : "#222"} />
@@ -52,7 +59,7 @@ export default function SettingsScreen() {
         </View>
       </View>
       <View className="absolute bottom-0 items-center w-screen py-2">
-          <Text className={`${darkMode ? "text-white/50" : "text-black"}  text-base`}>Shieldon ( v {Constants.expoConfig.version} )</Text>
+        <Text className={`${darkMode ? "text-white/50" : "text-black"}  text-base`}>Shieldon ( v {Constants.expoConfig.version} )</Text>
       </View>
     </View>
   );
