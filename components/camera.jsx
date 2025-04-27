@@ -22,6 +22,10 @@ const CameraComponent = ({ setHasPermission }) => {
         }
     };
 
+
+    
+
+
     const handleBarCodeScanned = async ({ data }) => {
 
         if (data.startsWith("otpauth://")) {

@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppContext } from "@/context";
 import Topnav from "@/components/topnav";
+import { router } from "expo-router";
+import Footer from "@/components/footer";
 
 const PIN_LENGTH = 4;
 const screenWidth = Dimensions.get("window").width;
@@ -11,7 +13,7 @@ const screenWidth = Dimensions.get("window").width;
 export default function PhoneStylePin() {
     const [pin, setPin] = useState([]);
     const [storedPin, setStoredPin] = useState(null);
-    const [step, setStep] = useState("setup"); // setup, verify, new, confirm
+    const [step, setStep] = useState("setup");
     const [tempPin, setTempPin] = useState(null);
     const { darkMode } = useAppContext();
     const shakeAnimation = useState(new Animated.Value(0))[0];
@@ -19,8 +21,8 @@ export default function PhoneStylePin() {
     useEffect(() => {
         const loadPIN = async () => {
             const saved = await AsyncStorage.getItem("securePIN");
-            // console.log(saved);
-            
+            console.log(saved);
+
             if (saved) {
                 setStoredPin(saved);
                 setStep("verify");
@@ -28,6 +30,12 @@ export default function PhoneStylePin() {
         };
         loadPIN();
     }, []);
+
+    useEffect(() => {
+
+        setPin([])
+    }, [step])
+
 
     const triggerShake = () => {
         Animated.sequence([
@@ -63,7 +71,8 @@ export default function PhoneStylePin() {
                         await AsyncStorage.setItem("securePIN", newPin.join(""));
                         setStoredPin(newPin.join(""));
                         Alert.alert("PIN Set", "Your PIN has been securely saved.");
-                        setStep("verified");
+                        setStep("verify");
+                        // router.navigate("/")
                     } else {
                         triggerShake();
                         Alert.alert("Error", "PINs do not match. Try again.");
@@ -108,10 +117,10 @@ export default function PhoneStylePin() {
         return "Manage your security PIN";
     };
 
-    const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "del", "0"];
+    const keypad = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "del", "0", "OK"];
 
     return (
-        <View className="pt-20 px-6">
+        <View className={`pt-20 px-6 h-screen ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"} `}>
             <Topnav name="Security" />
             <View className="mt-10">
                 <Text className={`text-2xl font-bold mb-3 text-center ${darkMode ? "text-white" : "text-black"}`}>
@@ -161,6 +170,7 @@ export default function PhoneStylePin() {
                     ))}
                 </View>
             </View>
+            <Footer />
         </View>
     );
 }

@@ -6,7 +6,7 @@ const myContext = createContext()
 
 const AppProvider = ({ children }) => {
 
-    const darkMode = useColorScheme() == "dark"
+    const [darkMode , setDarkMode] = useState(false)
     const [urls, setUrls] = useState([])
 
 
@@ -30,6 +30,7 @@ const AppProvider = ({ children }) => {
 
     const data = {
         darkMode,
+        setDarkMode,
         urls,
         setUrls
     }

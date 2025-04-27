@@ -5,7 +5,7 @@ import HomeScreen from './home';
 
 
 export default function App() {
-  const [unlocked, setUnlocked] = useState(true);
+  const [unlocked, setUnlocked] = useState(false);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

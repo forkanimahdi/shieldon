@@ -32,7 +32,7 @@ export default function SettingsScreen() {
           className={`flex-row justify-between items-center px-5 py-4 rounded-2xl ${darkMode ? "bg-[#1c1c1e]" : "bg-white"}`}
         >
           <Text className={`${darkMode ? "text-white" : "text-black"} text-base`}>Dark Mode</Text>
-          <Switch value={darkMode} onValueChange={useColorScheme} />
+          <Switch trackColor={darkMode ? "#f9f9f9" : "#1c1c1e"}  thumbColor={darkMode ? "#f9f9f9" : "#1c1c1e"} value={darkMode} onValueChange={()=>setDarkMode(!darkMode)} />
         </View>
 
         {/* Spacer before other options */}

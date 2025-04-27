@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { useColorScheme } from "nativewind";
 import Topnav from "@/components/topnav";
+import { useAppContext } from "@/context";
 
 if (Platform.OS === "android") {
     UIManager.setLayoutAnimationEnabledExperimental &&
@@ -55,7 +56,7 @@ const AccordionItem = ({ title, content, darkMode }) => {
 
 export default function HelpSupportScreen() {
     const { colorScheme } = useColorScheme();
-    const darkMode = colorScheme === "dark";
+    const {darkMode} = useAppContext();
 
     const data = [
         {
@@ -96,7 +97,7 @@ export default function HelpSupportScreen() {
         {
             title: "Need more help?",
             content:
-                "Reach out to us at support@shieldon.app — we're always happy to assist with any issue or question!",
+                "Reach out to us at forkanimahdi@gmail.com — we're always happy to assist with any issue or question!",
         },
     ];
 
