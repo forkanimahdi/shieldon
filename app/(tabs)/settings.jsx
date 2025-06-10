@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Switch, useColorScheme } from "react-native";
+import { View, Text, TouchableOpacity, Switch, useColorScheme, Alert } from "react-native";
 import { router, useNavigation } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppContext } from "@/context";
 import Topnav from "@/components/topnav";
 import Constants from 'expo-constants';
 import * as Linking from 'expo-linking'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function SettingsScreen() {
@@ -22,6 +23,15 @@ export default function SettingsScreen() {
     { label: "Rate the App", icon: "star-rate", screen: "rate" },
   ];
 
+  const changeTheme = async () => {
+    setDarkMode(!darkMode)
+    await AsyncStorage.setItem("darkMode", JSON.stringify(!darkMode));
+    const jsonValue = await AsyncStorage.getItem("darkMode");
+    console.log(jsonValue);
+
+
+  }
+
   return (
     <View className={`flex-1 px-4 pt-20 ${darkMode ? "bg-[#0e0e10]" : "bg-[#f9f9f9]"}`}>
 
@@ -33,7 +43,7 @@ export default function SettingsScreen() {
           className={`flex-row justify-between items-center px-5 py-4 rounded-2xl ${darkMode ? "bg-[#1c1c1e]" : "bg-white"}`}
         >
           <Text className={`${darkMode ? "text-white" : "text-black"} text-base`}>Dark Mode</Text>
-          <Switch trackColor={darkMode ? "#f9f9f9" : "#1c1c1e"} thumbColor={darkMode ? "#f9f9f9" : "#1c1c1e"} value={darkMode} onValueChange={() => setDarkMode(!darkMode)} />
+          <Switch trackColor={darkMode ? "#f9f9f9" : "#1c1c1e"} thumbColor={darkMode ? "#f9f9f9" : "#1c1c1e"} value={darkMode} onValueChange={changeTheme} />
         </View>
 
         {/* Spacer before other options */}

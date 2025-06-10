@@ -6,24 +6,35 @@ const myContext = createContext()
 
 const AppProvider = ({ children }) => {
 
-    const [darkMode , setDarkMode] = useState(false)
+    const [darkMode, setDarkMode] = useState(false)
     const [urls, setUrls] = useState([])
 
+    const getTheme = async () => {
+        const jsonValue = await AsyncStorage.getItem("darkMode");
+
+        setDarkMode(JSON.parse(jsonValue))
+
+        console.log("Dark Mode is set as " + jsonValue);
+
+
+    }
 
     const getOtpUrls = async () => {
         try {
             const jsonValue = await AsyncStorage.getItem("urls");
 
-            setUrls(JSON.parse(jsonValue)) 
+            setUrls(JSON.parse(jsonValue))
 
         } catch (e) {
             console.error('Error reading OTPs:', e);
             return [];
         }
     };
-     
+
+
     useEffect(() => {
         getOtpUrls()
+        getTheme()
     }, [])
 
 
